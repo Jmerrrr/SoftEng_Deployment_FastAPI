@@ -90,9 +90,8 @@ window.onload = function () {
     window.scrollTo(0, document.body.scrollHeight);
   }
   function sendChatGPTMessage(message, onSuccessCallback) {
-    const hostIp = window.location.hostname;
-    const protocol = window.location.protocol;
-    const apiUrl = `${protocol}//${hostIp}:8000/lamini`;
+    const currentURL = window.location.href;
+    const apiUrl = `${currentURL}/lamini`;
     var question = message;
     const encodeQuestion = encodeURIComponent(question);
     const urlWithQuery = apiUrl + "?question=" + encodeQuestion;
