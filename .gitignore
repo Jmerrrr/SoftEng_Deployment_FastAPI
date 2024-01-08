@@ -1,0 +1,5 @@
+allapitest/
+.env
+__pycache__/
+data/
+ingest.py

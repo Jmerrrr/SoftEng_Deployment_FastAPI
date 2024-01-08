@@ -1,0 +1,124 @@
+body {
+  padding: 0 20px;
+  background-color: #882019;
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+}
+.logo img {
+  position: absolute;
+  width: 15vw;
+}
+.center {
+  margin: 0 auto;
+  max-width: 60vw;
+}
+
+/* User ChatBox */
+.container {
+  border: 2px solid black;
+  color: black;
+  background-color: #e5e500; /* Sagot ng User */
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+.user-container {
+  text-align: right;
+}
+
+/* AI ChatBox */
+.darker {
+  border-color: none;
+  background-color: #f9f9cc;
+}
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.container img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right: 0;
+}
+.time-right {
+  float: right;
+  color: #aaa;
+}
+.time-left {
+  float: left;
+  color: #999;
+}
+
+.sticky {
+  bottom: 10px;
+  position: fixed;
+  margin: 0 auto;
+  max-width: 60vw;
+  width: 100%;
+}
+
+.input-container {
+  display: -ms-flexbox;
+  /* IE10 */
+  display: flex;
+  margin-bottom: 15px;
+}
+.input-field {
+  width: 100%;
+  padding: 10px;
+  outline: none;
+  background-color: #882019;
+}
+/* Set a style for the submit button */
+.btn {
+  background-color: #9f4c46;
+  color: black;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+.btn:hover {
+  opacity: 1;
+}
+.btnLine {
+  display: flex;
+}
+
+.send-btn {
+  flex: 9;
+  margin: 0px 5px 5px 5px;
+}
+
+.clear-btn {
+  flex: 1;
+  margin: 0px 5px 5px 5px;
+}
+.d-none {
+  display: none;
+}
+
+button {
+  border-radius: 10px;
+}
+
+textarea {
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0);
+  border: 1px solid yellow;
+  resize: none;
+  border-radius: 10px;
+}

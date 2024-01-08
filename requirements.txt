@@ -1,0 +1,9 @@
+chromadb
+requests
+langchain
+Jinja2==3.1.2
+fastapi==0.104.1
+pypdf
+pydantic
+huggingface_hub
+python-dotenv
