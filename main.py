@@ -103,36 +103,24 @@ def process_answer(prompt):
     answer = qa
     return answer
 
-print("Start: ")
-while True:
-    print("-> ")
-    userInput = input("")
-    if userInput == "bye":
-        print("END")
-        break
+def clear_memory():
+    memory.clear()
 
-    else:
-        answer = process_answer(userInput)
-        # answer = qa(query)
-        # print(answer["result"])
-        print(answer)
-# def clear_memory():
-#     memory.clear()
-#
-# @app.get("/")
-# def form_post(request: Request):
-#     results = "What is Your Query"
-#     return templates.TemplateResponse('index.html', context={'request': request, 'results': results})
-#  
-# @app.get('/lamini')
-# def model(question : str):
-#     res = process_answer(question)
-#     result = copy.deepcopy(res)
-#     return result
-#
-# @app.get('/clearMem')
-# def clearMemory():
-#     clear_memory()
+@app.get("/")
+def form_post(request: Request):
+    results = "What is Your Query"
+    return templates.TemplateResponse('index.html', context={'request': request, 'results': results})
+ 
+@app.get('/lamini')
+def model(question : str):
+    res = process_answer(question)
+    result = copy.deepcopy(res)
+    return result
+
+@app.get('/clearMem')
+def clearMemory():
+    clear_memory()
+
 
 
 
