@@ -33,7 +33,6 @@ retriever = load_vector_store.as_retriever(search_kwargs={"k":2})
 repo_id = "MBZUAI/LaMini-Flan-T5-783M"
 llm = HuggingFaceHub(repo_id=repo_id,model_kwargs={"temperature":0.3,"max_length":500})
 
-
 prompt_template="""
 Use the following pieces of information to answer the user's question.
 If you don't know the answer, just say the you don't know, don't try to make up an answer.
@@ -75,7 +74,7 @@ zs_prompt = PromptTemplate.from_template(template = zs_template, zs_input_variab
 conversation = LLMChain(prompt=zs_prompt, llm = llm)
 
 API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
+API_URL = "https://api-inference.huggingface.co/models/MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
 # Zero_shot LLM
@@ -87,7 +86,7 @@ def zero_shot(userPrompt):
 
     classifier = zero_shot_handler({
         "inputs":userPrompt,
-        "parameters":{"candidate_labels": ["Simple Conversation", "School related question"]}
+        "parameters":{"candidate_labels": ["Simple Conversation", "School related question", "Follow up Question"]}
         })
 
     if classifier["labels"][0] == "Simple Conversation":
@@ -96,20 +95,21 @@ def zero_shot(userPrompt):
     if classifier["labels"][0] == "School related question":
         final_result = query(userPrompt)
         return final_result["result"]
+    if classifier["labels"][0] == "Follow up Question":
+        final_result = query(userPrompt)
+        return final_result["result"]
 
 def process_answer(prompt):
     question = prompt
     qa= zero_shot(question)
-    answer = qa
-    return answer
+    return qa
 
 def clear_memory():
     memory.clear()
 
 @app.get("/")
 def form_post(request: Request):
-    results = "What is Your Query"
-    return templates.TemplateResponse('index.html', context={'request': request, 'results': results})
+    return templates.TemplateResponse('index.html', context={'request': request})
  
 @app.get('/lamini')
 def model(question : str):
@@ -120,6 +120,26 @@ def model(question : str):
 @app.get('/clearMem')
 def clearMemory():
     clear_memory()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
