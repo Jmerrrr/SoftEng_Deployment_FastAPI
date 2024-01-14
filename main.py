@@ -9,14 +9,14 @@ from fastapi import FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from langchain.chains import LLMChain, RetrievalQA
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_community.llms import HuggingFaceHub
 from langchain_community.vectorstores import Chroma
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static" )
 templates = Jinja2Templates(directory="templates/")
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -31,10 +31,12 @@ retriever = load_vector_store.as_retriever(search_kwargs={"k":2})
 
 # ChatBot LLM
 repo_id = "MBZUAI/LaMini-Flan-T5-783M"
-llm = HuggingFaceHub(repo_id=repo_id,model_kwargs={"temperature":0.3,"max_length":500})
+llm = HuggingFaceHub(repo_id=repo_id,model_kwargs={"temperature":0.3,"max_new_tokens":250, "min_length":40,"top_p":0.95, "do_sample":True })
+        
 
 prompt_template="""
-Use the following pieces of information to answer the user's question.
+Use the following pieces of University information to answer the user's question.
+Every Question revolve around University campus.
 If you don't know the answer, just say the you don't know, don't try to make up an answer.
 
 Context: {context}
@@ -43,7 +45,7 @@ Question: {question}
 Only return the helpful answer below and nothing else.
 HelfUl answer:
 """
-memory = ConversationBufferMemory(memory_key = "chat_history", return_messages=True)
+memory =ConversationBufferWindowMemory(k=6)
 
 prompt = PromptTemplate(input_variables=['context','question'], template = prompt_template)
 
@@ -55,7 +57,7 @@ def qa_chain():
     retriever = retriever,
     memory = memory,
     chain_type_kwargs=chain_type_kwargs,
-    verbose=True
+    verbose=False
     )
     return qa
 
@@ -86,16 +88,19 @@ def zero_shot(userPrompt):
 
     classifier = zero_shot_handler({
         "inputs":userPrompt,
-        "parameters":{"candidate_labels": ["Simple Conversation", "School related question", "Follow up Question"]}
+        "parameters":{"candidate_labels": ["Conversation", "University question", "Follow up Question" ,"Asking for a Person"]}
         })
 
-    if classifier["labels"][0] == "Simple Conversation":
-        final_result = conversation.run({"text":userPrompt})
+    if classifier["labels"][0] == "Conversation":
+        final_result = conversation.run(userPrompt)
         return final_result
-    if classifier["labels"][0] == "School related question":
+    if classifier["labels"][0] == "University question":
         final_result = query(userPrompt)
         return final_result["result"]
     if classifier["labels"][0] == "Follow up Question":
+        final_result = query(userPrompt)
+        return final_result["result"]
+    if classifier["labels"][0] == "Asking for a Person":
         final_result = query(userPrompt)
         return final_result["result"]
 
@@ -103,6 +108,7 @@ def process_answer(prompt):
     question = prompt
     qa= zero_shot(question)
     return qa
+
 
 def clear_memory():
     memory.clear()
@@ -112,58 +118,14 @@ def form_post(request: Request):
     return templates.TemplateResponse('index.html', context={'request': request})
  
 @app.get('/lamini')
-def model(question : str):
-    res = process_answer(question)
+def model(question: str):
+    res = process_answer("University: "+question)
     result = copy.deepcopy(res)
     return result
 
 @app.get('/clearMem')
 def clearMemory():
     clear_memory()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

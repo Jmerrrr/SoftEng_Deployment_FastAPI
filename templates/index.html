@@ -3,10 +3,10 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/static/css/style.css" />
-    <!-- <link
-      rel="stylesheet"
-      href="{{ url_for('static', path='/css/style.css') }}"
-    /> -->
+    <!-- <link -->
+    <!--   rel="stylesheet" -->
+    <!--   href="{{ url_for('static', path='/css/style.css') }}" -->
+    <!-- />  -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -14,7 +14,10 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <script type="text/javascript" src="/static/script/chatscript.js"></script>
+    <script
+      type="text/javascript"
+      src="/static/script/chatscript.js?=1"
+    ></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,47 +26,100 @@
     />
   </head>
   <body>
-    <div class="logo">
+    <div class="logoAndHeaderQuote">
       <img
-        src="/static/images/perpetual-logo.png"
-        alt="University of Perpetual Help System Dalta Logo"
+        id="logo"
+        src="/static/images/University_of_Perpetual_Help_System_DALTA_logo.png"
+        alt="UPHSD LOGO"
       />
+      <h3 id="quote">How can I assist you right now?</h3>
     </div>
+
     <div class="center">
       <div id="chatOutput"></div>
       <div id="loadingContainer" class="container darker d-none">
         <i class="fa-solid fa-robot" style="font-size: 2em"></i>
         <p>Thinking...</p>
       </div>
-      <h2>University ChatBot</h2>
-      <p style="padding-bottom: 70px"></p>
-      <form action="javascript:void(0)">
-        <div class="sticky">
-          <div class="input-container">
-            <textarea
-              id="chatMessage"
-              class="input-field"
-              placeholder="Enter message..."
-              name="usrnm"
-              rows="1"
-            ></textarea>
-          </div>
-          <div class="btnLine">
-            <button
-              style="background-color: #198188"
-              type="clear"
-              id="clearBtn"
-              class="btn clear-btn"
-            >
-              <i class="fa fa-refresh" aria-hidden="true"></i>
-              Clear
-            </button>
-            <button type="submit" id="sendBtn" class="btn send-btn">
-              Send
-            </button>
-          </div>
+    </div>
+
+    <div class="inpuAndButton" style="position: fixed">
+      <div class="input-container">
+        <textarea
+          id="chatMessage"
+          class="input-field"
+          placeholder="Enter message..."
+          name="usrnm"
+          rows="1"
+        ></textarea>
+      </div>
+      <div class="btnLine">
+        <button
+          style="background-color: #198188"
+          type="clear"
+          id="clearBtn"
+          class="btn clear-btn"
+        >
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+          Clear
+        </button>
+        <button type="submit" id="sendBtn" class="btn send-btn">Send</button>
+      </div>
+    </div>
+
+    <div id="hero">
+      <h2 id="faqHead">Frequently Asked Questions</h2>
+      <div id="hero-faq">
+        <div id="faq">
+          <h3>
+            What is the fastest way to do my enrollment paperwork as a
+            freshment?
+          </h3>
         </div>
-      </form>
+
+        <div id="faq">
+          <h3>Can you show me my grades?</h3>
+        </div>
+
+        <div id="faq">
+          <h3>
+            How many business days it takes to process the release of my form
+            137?
+          </h3>
+        </div>
+
+        <div id="faq">
+          <h3>Tell me the location of the library of UPHSD Molino.</h3>
+        </div>
+
+        <div id="faq">
+          <h3>Where is the GVC Room?</h3>
+        </div>
+
+        <div id="faq">
+          <h3>Best seller meal in the canteen.</h3>
+        </div>
+
+        <div id="faq">
+          <h3>
+            When can I get the credentials documents I requested and how much is
+            the cost of it?
+          </h3>
+        </div>
+
+        <div id="faq">
+          <h3>
+            What requirements do I need to finish to enroll for the next
+            semester?
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="buttomtext">
+      <p>
+        University Chatbot can make mistakes. Consider checking important
+        information.
+      </p>
     </div>
   </body>
 </html>

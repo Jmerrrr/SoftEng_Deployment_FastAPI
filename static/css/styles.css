@@ -111,6 +111,11 @@ textarea {
   margin-right: 20px;
   border-radius: 50%;
 }
+/* .container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right: 0;
+} */
 .time-right {
   float: right;
   color: #aaa;
@@ -140,12 +145,12 @@ textarea {
 
 .send-btn {
   flex: 9;
-  margin: 0px 0px 3px 3px;
+  margin: 0px 0px 5px 5px;
 }
 
 .clear-btn {
   flex: 1;
-  margin: 0px 3px 3px 0px;
+  margin: 0px 5px 5px 0px;
 }
 .d-none {
   display: none;
@@ -154,6 +159,8 @@ textarea {
 button {
   border-radius: 10px;
 }
+
+/* dito ako nag start mag bago*/
 
 #hero h2 {
   text-align: center;

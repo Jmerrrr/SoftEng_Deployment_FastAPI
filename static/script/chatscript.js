@@ -4,14 +4,41 @@ window.onload = function () {
   var chatMessageElem = document.getElementById("chatMessage");
   var chatOutputElem = document.getElementById("chatOutput");
   var loadingContainerElem = document.getElementById("loadingContainer");
-  var headings = document.querySelectorAll("h2");
+  var logoElem = document.getElementById("logo");
+  var quoteElem = document.getElementById("quote");
+  var faqHeadElem = document.getElementById("faqHead");
+  var headings = document.querySelectorAll('[id="hero-faq"]');
+  var containers = document.querySelectorAll('[id="faq"]');
+
+  let restriesAvailable = 10;
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  containers.forEach(function (container) {
+    container.addEventListener("click", function () {
+      var faqText = this.querySelector("h3").textContent;
+      faqHandler(faqText);
+    });
+  });
 
   function clearChat() {
-    // Loop through each h2 element
     headings.forEach(function (heading) {
       // Modify the style (e.g., set opacity to 0 for hiding)
       heading.style.opacity = 1;
+      heading.style.pointerEvents = "visible";
+      heading.style.top = "";
+      heading.style.height = "";
     });
+    logoElem.style.opacity = 1;
+    quoteElem.style.opacity = 1;
+    faqHeadElem.style.opacity = 1;
+    faqHeadElem.style.pointerEvents = "visible";
+    logoElem.style.pointerEvents = "visible";
+    quoteElem.style.pointerEvents = "visible";
+
+    restriesAvailable = 10;
+
     var pElement = loadingContainerElem.querySelector("p");
     if (pElement) {
       loadingContainerElem.removeChild(pElement);
@@ -20,7 +47,6 @@ window.onload = function () {
     while (chatOutputElem.firstChild) {
       chatOutputElem.removeChild(chatOutputElem.firstChild);
     }
-
     // Make a GET request to the FastAPI endpoint
     fetch("/clearMem")
       .then((response) => {
@@ -34,14 +60,46 @@ window.onload = function () {
       );
   }
 
+  function faqHandler(faqMessage) {
+    // Loop through each h2 element
+    headings.forEach(function (heading) {
+      // Modify the style (e.g., set opacity to 0 for hiding)
+      heading.style.opacity = 0;
+      heading.style.pointerEvents = "none";
+      heading.style.top = "1vh";
+      heading.style.height = "10vh";
+    });
+    logoElem.style.opacity = 0;
+    quoteElem.style.opacity = 0;
+    faqHeadElem.style.opacity = 0;
+    logoElem.style.pointerEvents = "none";
+    quoteElem.style.pointerEvents = "none";
+    faqHeadElem.style.pointerEvents = "none";
+
+    generateUserChatBubble(faqMessage);
+    loadingContainerElem.classList.remove("d-none");
+    sendChatGPTMessage(faqMessage, generateAIChatBubble);
+    chatMessageElem.value = "";
+  }
+
   function messageHandler() {
-    var message = chatMessageElem.value;
+    // var message = chatMessageElem.value;
+    var userInput = chatMessageElem.value;
+    var message = userInput[0].toUpperCase() + userInput.slice(1);
     if (message != null && message != "") {
-      // Loop through each h2 element
       headings.forEach(function (heading) {
-        // Modify the style (e.g., set opacity to 0 for hiding)
         heading.style.opacity = 0;
+        heading.style.pointerEvents = "none";
+        heading.style.top = "1vh";
+        heading.style.height = "10vh";
       });
+      logoElem.style.opacity = 0;
+      quoteElem.style.opacity = 0;
+      faqHeadElem.style.opacity = 0;
+      logoElem.style.pointerEvents = "none";
+      quoteElem.style.pointerEvents = "none";
+      faqHeadElem.style.pointerEvents = "none";
+
       generateUserChatBubble(message);
       loadingContainerElem.classList.remove("d-none");
       sendChatGPTMessage(message, generateAIChatBubble);
@@ -50,6 +108,7 @@ window.onload = function () {
       alert("Please enter a message.");
     }
   }
+
   chatMessageElem.addEventListener("keydown", function (event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -89,25 +148,41 @@ window.onload = function () {
     loadingContainerElem.classList.add("d-none");
     window.scrollTo(0, document.body.scrollHeight);
   }
-  function sendChatGPTMessage(message, onSuccessCallback) {
-    const currentURL = window.location.href;
-    const apiUrl = `${currentURL}/lamini`;
+  async function sendChatGPTMessage(message, onSuccessCallback) {
+    const hostIp = window.location.hostname;
+    const protocol = window.location.protocol;
+    const apiUrl = `${protocol}//${hostIp}:8000/lamini`;
     var question = message;
     const encodeQuestion = encodeURIComponent(question);
     const urlWithQuery = apiUrl + "?question=" + encodeQuestion;
-    return fetch(urlWithQuery, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        onSuccessCallback(data);
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
+    try {
+      const response = await fetch(urlWithQuery, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
       });
+      if (response.ok) {
+        const data = await response.json();
+        onSuccessCallback(data);
+      } else {
+        if (retries > 0) {
+          sleep(20000);
+          console.log("Sleep");
+          sendChatGPTMessage(message, onSuccessCallback, --retries);
+        } else {
+          onSuccessCallback(
+            "Hey, sorry about this, but there's a server error messing with my ability to tackle your current query. Could you shoot your question my way again?",
+          );
+        }
+        console.error("Error: ", response.status);
+      }
+    } catch (error) {
+      onSuccessCallback(
+        "Hey, sorry about this, but there's a server error messing with my ability to tackle your current query. Could you shoot your question my way again?",
+      );
+      console.error("Error: ", response.status);
+    }
   }
 
   clearBtnElem.addEventListener("click", function () {
